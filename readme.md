@@ -69,7 +69,7 @@ console.log(biblioteca1 === biblioteca2);
 
 - Fácil de implementar e utilizar: Simples de integrar em linguagens orientadas a objetos como TypeScript, Java ou C#.
 
-**Pontos Fracos:**
+### Pontos Fracos:
 
 - Estado global oculto: Como todos acessam a mesma instância, mudanças em um lugar afetam outros módulos, podendo gerar efeitos colaterais inesperados.
 
