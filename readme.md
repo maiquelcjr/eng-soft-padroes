@@ -79,3 +79,88 @@ console.log(biblioteca1 === biblioteca2);
 - Acoplamento indesejado: Componentes que dependem diretamente do Singleton ficam mais difíceis de reutilizar ou substituir por versões alternativas.
 
 - Não é thread-safe por padrão: Em sistemas com concorrência (multithread), é necessário cuidado adicional para evitar instâncias duplicadas.
+
+## Factory Method
+### Objetivo do Factory Method:
+
+O padrão Factory Method tem como objetivo encapsular a criação de objetos, delegando essa responsabilidade a subclasses. Em vez de instanciar objetos diretamente com new, o Factory Method define um método de fábrica que pode ser sobrescrito para determinar qual tipo de objeto será criado.
+
+Isso permite que o código principal não precise conhecer a classe concreta que está sendo instanciada, promovendo desacoplamento e maior flexibilidade para extensão.
+
+### Quando devemos Utilizar:
+
+É possível utilizar o Factory Method quando:
+
+- Você precisa instanciar objetos de forma flexível, mas não quer acoplar seu código à classe concreta.
+- O sistema precisa ser facilmente extensível com novas variantes de produtos, sem alterar o código cliente.
+- Você quer delegar a responsabilidade de criação de objetos a subclasses, mantendo o código genérico.
+
+### Estrutura:
+
+No código abaixo, foi utilizado o padrão Factory Method para permitir a criação de diferentes tipos de livros (LivroFisico e LivroDigital) por meio de uma interface comum.
+O método criarLivro() é a fábrica que encapsula a lógica de criação, permitindo que as subclasses definam qual objeto específico será instanciado.
+```typescript
+interface Livro {
+  ler(): void;
+}
+
+class LivroFisico implements Livro {
+  ler(): void {
+    console.log("Lendo livro físico: folheando páginas.");
+  }
+}
+
+class LivroDigital implements Livro {
+  ler(): void {
+    console.log("Lendo livro digital: deslizando na tela.");
+  }
+}
+
+abstract class LojaDeLivros {
+  abstract criarLivro(): Livro;
+
+  venderLivro(): void {
+    const livro = this.criarLivro();
+    livro.ler();
+  }
+}
+
+class LojaFisica extends LojaDeLivros {
+  criarLivro(): Livro {
+    return new LivroFisico();
+  }
+}
+
+class LojaOnline extends LojaDeLivros {
+  criarLivro(): Livro {
+    return new LivroDigital();
+  }
+}
+
+const loja1 = new LojaFisica();
+const loja2 = new LojaOnline();
+
+loja1.venderLivro();
+// Lendo livro físico
+loja2.venderLivro();
+// Lendo livro digital
+```
+
+### Pontos Fortes:
+
+- Desacoplamento entre criação e uso: O código cliente não precisa conhecer as classes concretas.
+
+- Facilidade para extensão: Novos tipos de produtos podem ser adicionados sem alterar o código que os consome.
+
+- Aplica o princípio aberto/fechado (OCP): Permite extensão do sistema sem modificar código existente.
+
+- Organização clara: Torna o sistema mais modular e fácil de manter.
+
+### Pontos Fracos:
+
+- Aumento na complexidade: Requer mais classes e estruturas do que instanciar diretamente com new.
+
+- Excesso de abstração em sistemas simples: Pode parecer desnecessário para projetos pequenos ou com poucas variações de objeto.
+
+- Sobrecarga inicial: Pode ser difícil entender e aplicar corretamente se mal planejado.
+
