@@ -4,13 +4,13 @@
 ------------
 
 ## Singleton
-**Objetivo do Singleton:**
+### Objetivo do Singleton:
 
 O principal objetivo do padrão de projeto Singleton é assegurar que uma determinada classe possua apenas uma instância ao longo de todo o ciclo de vida da aplicação. Além disso, ele garante que essa instância seja facilmente acessível de qualquer lugar do sistema, funcionando como um ponto de acesso global.
 
 Esse padrão é frequentemente utilizado em cenários onde um único ponto centralizado de controle ou de dados é necessário, evitando duplicações desnecessárias e conflitos de estado. Com o Singleton, é possível proteger recursos compartilhados, como arquivos de log, configurações, conexões com banco de dados, entre outros.
 
-**Quando devemos Utilizar:**
+### Quando devemos Utilizar:
 
 Deve-se utilizar Singleton quando:
 
@@ -18,7 +18,7 @@ Deve-se utilizar Singleton quando:
 - Diferentes partes da aplicação precisam acessar o mesmo objeto compartilhado.
 - Há necessidade de centralizar um recurso ou controle, como: Configurações Globais,  Log ou até mesmo Conexão com banco de dados
 
-**Estrutura:**
+### Estrutura:
 
 No código abaixo, foi utilizado o padrão Singleton para garantir que apenas uma instância da classe Biblioteca seja criada e compartilhada por toda a aplicação.
 Mesmo criando múltiplas variáveis, elas sempre apontam para a mesma instância, mantendo os dados sincronizados.
@@ -39,6 +39,7 @@ class Biblioteca {
   public adicionarLivro(titulo: string): void {
     this.livros.push(titulo);
   }
+
   public listarLivros(): void {
     console.log("Livros na biblioteca:", this.livros);
   }
@@ -59,7 +60,7 @@ console.log(biblioteca1 === biblioteca2);
 // Irá retornar true, pois é a mesma instância.
 ```
 
-**Pontos Fortes:**
+### Pontos Fortes:
 
 - Consistência global: Garante que todos os módulos do sistema acessem a mesma instância, evitando divergências de estado.
 
