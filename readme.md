@@ -260,3 +260,119 @@ livroCompleto.exibirInfo();
 - Sobrecarga desnecessária em casos simples: Em objetos simples, o uso do Builder pode ser exagerado.
 
 - Curva de aprendizado inicial: Para quem não conhece o padrão, a estrutura pode parecer excessiva à primeira vista.
+
+## Abstract Factory
+### Objetivo do Abstract Factory:
+
+O padrão Abstract Factory tem como objetivo fornecer uma estrutura para criar famílias de objetos interdependentes, garantindo que eles sejam compatíveis entre si, sem que o código cliente precise saber quais classes concretas estão sendo usadas.
+
+Esse padrão é especialmente útil quando o sistema precisa variar os produtos utilizados de forma consistente, como criar diferentes interfaces para sistemas operacionais, ou no nosso exemplo, diferentes tipos de livros e capas com estilos padronizados por editora.
+
+### Quando devemos Utilizar:
+
+O Abstract Factory é recomendado quando:
+
+- Seu sistema precisa trabalhar com várias famílias de objetos relacionados.
+
+- Você quer garantir que objetos criados juntos sejam compatíveis entre si.
+
+- Deseja isolar o código cliente da lógica de criação dos objetos.
+
+### Estrutura:
+
+Neste exemplo, temos uma fábrica que cria produtos relacionados: Livro e Capa.
+Cada editora (Moderna e Clássica) implementa sua própria versão dos dois produtos, e a fábrica garante que o livro e a capa combinem entre si.
+```typescript
+interface Livro {
+  getDescricao(): string;
+}
+
+interface Capa {
+  getEstilo(): string;
+}
+
+// Produtos concretos - Editora Moderna
+class LivroModerno implements Livro {
+  getDescricao(): string {
+    return "Livro de linguagem moderna e objetiva.";
+  }
+}
+
+class CapaModerna implements Capa {
+  getEstilo(): string {
+    return "Capa com design minimalista e cores vivas.";
+  }
+}
+
+// Produtos concretos - Editora Clássica
+class LivroClassico implements Livro {
+  getDescricao(): string {
+    return "Livro com estilo tradicional e linguagem rebuscada.";
+  }
+}
+
+class CapaClassica implements Capa {
+  getEstilo(): string {
+    return "Capa com moldura dourada e fontes clássicas.";
+  }
+}
+
+// Fábrica abstrata
+interface EditoraFactory {
+  criarLivro(): Livro;
+  criarCapa(): Capa;
+}
+
+// Fábricas concretas
+class EditoraModernaFactory implements EditoraFactory {
+  criarLivro(): Livro {
+    return new LivroModerno();
+  }
+  criarCapa(): Capa {
+    return new CapaModerna();
+  }
+}
+
+class EditoraClassicaFactory implements EditoraFactory {
+  criarLivro(): Livro {
+    return new LivroClassico();
+  }
+  criarCapa(): Capa {
+    return new CapaClassica();
+  }
+}
+
+// Código cliente
+function montarLivro(factory: EditoraFactory) {
+  const livro = factory.criarLivro();
+  const capa = factory.criarCapa();
+
+  console.log(livro.getDescricao());
+  console.log(capa.getEstilo());
+}
+
+// Teste
+const moderna = new EditoraModernaFactory();
+const classica = new EditoraClassicaFactory();
+
+montarLivro(moderna);
+montarLivro(classica);
+```
+
+### Pontos Fortes:
+
+- Consistência entre objetos criados: Garante que os objetos gerados por uma mesma fábrica sejam compatíveis entre si.
+
+- Baixo acoplamento: O código cliente depende apenas da interface da fábrica, não das implementações concretas.
+
+- Fácil expansão: Adicionar novas famílias de produtos (ex: uma nova editora) não exige alteração no código cliente.
+
+- Ideal para sistemas que mudam de “modo” ou “estilo” completo, como temas visuais, tipos de clientes, idiomas etc.
+
+### Pontos Fracos:
+
+- Mais complexidade estrutural: Requer muitas interfaces e classes para representar fábricas e produtos.
+
+- Manutenção mais trabalhosa em sistemas pequenos: Pode ser exagerado para projetos com poucas variações.
+
+- Dificuldade para adicionar um novo produto à família: Adicionar um novo item (ex: marcador de página) exigiria mudanças em todas as fábricas.
