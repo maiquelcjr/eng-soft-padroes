@@ -83,22 +83,25 @@ console.log(biblioteca1 === biblioteca2);
 ## Factory Method
 ### Objetivo do Factory Method:
 
-O padrão Factory Method tem como objetivo encapsular a criação de objetos, delegando essa responsabilidade a subclasses. Em vez de instanciar objetos diretamente com new, o Factory Method define um método de fábrica que pode ser sobrescrito para determinar qual tipo de objeto será criado.
+O padrão Factory Method serve para esconder como os objetos são criados, deixando essa tarefa para as classes filhas. Em vez de usar o new diretamente para criar um objeto, esse padrão define um método especial que pode ser mudado nas subclasses para escolher qual tipo de objeto será criado.
 
-Isso permite que o código principal não precise conhecer a classe concreta que está sendo instanciada, promovendo desacoplamento e maior flexibilidade para extensão.
+Com isso, o código principal não precisa saber qual classe exata está sendo usada para criar o objeto. Isso deixa o código mais flexível e fácil de mudar ou melhorar no futuro, já que as partes do programa ficam menos presas umas às outras.
 
 ### Quando devemos Utilizar:
 
-É possível utilizar o Factory Method quando:
+É possível usar o Factory Method quando:
 
-- Você precisa instanciar objetos de forma flexível, mas não quer acoplar seu código à classe concreta.
-- O sistema precisa ser facilmente extensível com novas variantes de produtos, sem alterar o código cliente.
-- Você quer delegar a responsabilidade de criação de objetos a subclasses, mantendo o código genérico.
+- Você precisa criar objetos de um jeito mais flexível, mas não quer que seu código dependa diretamente da classe usada para isso.
+
+- O sistema precisa permitir novas versões ou tipos de objetos no futuro, sem precisar mudar o código que já está pronto.
+
+- Você quer passar a responsabilidade de criar os objetos para outras classes (filhas), deixando o código principal mais genérico e reutilizável.
 
 ### Estrutura:
 
-No código abaixo, foi utilizado o padrão Factory Method para permitir a criação de diferentes tipos de livros (LivroFisico e LivroDigital) por meio de uma interface comum.
-O método criarLivro() é a fábrica que encapsula a lógica de criação, permitindo que as subclasses definam qual objeto específico será instanciado.
+No código abaixo, foi usado o padrão Factory Method para criar diferentes tipos de livros, como LivroFisico e LivroDigital, usando uma estrutura comum (interface).
+
+O método criarLivro() funciona como uma fábrica, ou seja, ele cuida da criação dos livros. Assim, as subclasses (como LojaFisica e LojaOnline) é que dizem qual tipo de livro será criado.
 ```typescript
 interface Livro {
   ler(): void;
@@ -148,19 +151,112 @@ loja2.venderLivro();
 
 ### Pontos Fortes:
 
-- Desacoplamento entre criação e uso: O código cliente não precisa conhecer as classes concretas.
+- Separação entre criar e usar: O código que usa o objeto não precisa saber qual classe exata está sendo usada para criá-lo.
 
-- Facilidade para extensão: Novos tipos de produtos podem ser adicionados sem alterar o código que os consome.
+- Fácil de adicionar novidades: Você pode criar novos tipos de produtos sem precisar mudar o código que já usa esses produtos.
 
-- Aplica o princípio aberto/fechado (OCP): Permite extensão do sistema sem modificar código existente.
+- Segue o princípio aberto/fechado: Isso quer dizer que o sistema pode ser melhorado ou ampliado sem precisar mudar o que já está feito.
 
-- Organização clara: Torna o sistema mais modular e fácil de manter.
+- Organização mais clara: Deixa o sistema mais organizado, dividido em partes menores, o que facilita na hora de entender e fazer manutenção.
 
 ### Pontos Fracos:
 
-- Aumento na complexidade: Requer mais classes e estruturas do que instanciar diretamente com new.
+- Mais complexo: Usar esse padrão exige mais classes e mais estrutura do que simplesmente usar new para criar objetos direto.
 
-- Excesso de abstração em sistemas simples: Pode parecer desnecessário para projetos pequenos ou com poucas variações de objeto.
+- Muito complicado para projetos simples: Em sistemas pequenos, pode parecer exagero usar tanta estrutura só para criar objetos.
 
-- Sobrecarga inicial: Pode ser difícil entender e aplicar corretamente se mal planejado.
+- Difícil no começo: Se não for bem planejado, pode ser confuso entender e usar esse padrão da forma certa.
 
+## Builder
+### Objetivo do Builder:
+
+O padrão Builder tem como a sua função principal estruturar a criação de objetos que possuem várias partes ou configurações, permitindo que eles sejam montados gradualmente. A ideia central é separar a construção do objeto da sua representação final, de forma que o mesmo processo de construção possa gerar diferentes versões ou variações do objeto.
+
+Isso evita construtores confusos com muitos parâmetros e permitindo maior clareza e controle na criação de objetos mais elaborados.
+
+### Quando devemos Utilizar:
+
+O Builder é especialmente útil quando:
+
+- O objeto a ser criado possui muitas propriedades opcionais ou precisa de configuração personalizada.
+
+- É necessário ter diferentes formas de montar o mesmo objeto.
+
+- Deseja-se melhorar a legibilidade do processo de criação, evitando longos construtores ou múltiplas sobrecargas de método.
+
+### Estrutura:
+
+Neste exemplo, utilizamos o padrão Builder para montar objetos do tipo Livro, que podem conter título, autor, conteúdo e ISBN.
+O processo de construção é feito passo a passo, com chamadas encadeadas, facilitando a personalização sem precisar passar tudo no construtor.
+```typescript
+class Livro {
+  titulo?: string;
+  autor?: string;
+  conteudo?: string;
+  isbn?: string;
+
+  exibirInfo(): void {
+    console.log("Livro:", this.titulo, "-", this.autor, "-", this.isbn);
+  }
+}
+
+class LivroBuilder {
+  private livro: Livro;
+
+  constructor() {
+    this.livro = new Livro();
+  }
+
+  setTitulo(titulo: string): LivroBuilder {
+    this.livro.titulo = titulo;
+    return this;
+  }
+
+  setAutor(autor: string): LivroBuilder {
+    this.livro.autor = autor;
+    return this;
+  }
+
+  setConteudo(conteudo: string): LivroBuilder {
+    this.livro.conteudo = conteudo;
+    return this;
+  }
+
+  setISBN(isbn: string): LivroBuilder {
+    this.livro.isbn = isbn;
+    return this;
+  }
+
+  build(): Livro {
+    return this.livro;
+  }
+}
+
+const livroCompleto = new LivroBuilder()
+  .setTitulo("Design Patterns em Ação")
+  .setAutor("João Silva")
+  .setISBN("978-1234567890")
+  .setConteudo("Capítulo 1: Builder Pattern...")
+  .build();
+
+livroCompleto.exibirInfo();
+// Livro: Design Patterns em Ação - João Silva - 978-1234567890
+```
+
+### Pontos Fortes:
+
+- Clareza na construção: O processo de montar objetos complexos ganha mais organização e lucidez.
+
+- Personalização flexível: Permite criar diferentes versões do objeto sem modificar sua estrutura base.
+
+- Evita construtores longos: Substitui a necessidade de múltiplos parâmetros ou sobrecargas de construtores.
+
+- Reutilização de código: O mesmo Builder pode ser usado para montar objetos similares com pequenas variações.
+
+### Pontos Fracos:
+
+- Mais classes envolvidas: A aplicação do padrão requer a criação de classes auxiliares (Builder), o que pode aumentar o volume de código.
+
+- Sobrecarga desnecessária em casos simples: Em objetos simples, o uso do Builder pode ser exagerado.
+
+- Curva de aprendizado inicial: Para quem não conhece o padrão, a estrutura pode parecer excessiva à primeira vista.
