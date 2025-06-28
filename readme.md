@@ -307,44 +307,45 @@ class Livro {
   }
 }
 
-class LivroBuilder {
+class LivroMontador {
   private livro: Livro;
 
   constructor() {
     this.livro = new Livro();
   }
 
-  setTitulo(titulo: string): LivroBuilder {
+  setTitulo(titulo: string): LivroMontador {
     this.livro.titulo = titulo;
     return this;
   }
 
-  setAutor(autor: string): LivroBuilder {
+  setAutor(autor: string): LivroMontador {
     this.livro.autor = autor;
     return this;
   }
 
-  setConteudo(conteudo: string): LivroBuilder {
+  setConteudo(conteudo: string): LivroMontador {
     this.livro.conteudo = conteudo;
     return this;
   }
 
-  setISBN(isbn: string): LivroBuilder {
+  setISBN(isbn: string): LivroMontador {
     this.livro.isbn = isbn;
     return this;
   }
 
-  build(): Livro {
+  construir(): Livro {
     return this.livro;
   }
 }
 
-const livroCompleto = new LivroBuilder()
+// Teste
+const livroCompleto = new LivroMontador()
   .setTitulo("Diário de um Banana")
   .setAutor("Jeff Kinney")
   .setISBN("978-8576831309")
   .setConteudo("Capítulo 1: A vida nada fácil de um garoto na escola...")
-  .build();
+  .construir();
 
 livroCompleto.exibirInfo();
 // Livro: Diário de um Banana - Jeff Kinney - 978-8576831309
