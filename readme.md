@@ -1,5 +1,5 @@
 ### Trabalho de Engenharia de Software II - Padrões de Desenvolvimento
-**Integrantes**: Alberto Parker, Anthony Pereira, Eduardo Leal, Maiquel Junior e Vitor Manoel
+**Integrantes**: Alberto Parker, Eduardo Leal, Maiquel Junior e Vitor Manoel
 
 ------------
 
@@ -22,6 +22,41 @@ Deve-se utilizar Singleton quando:
 
 No código abaixo, foi utilizado o padrão Singleton para garantir que apenas uma instância da classe Biblioteca seja criada e compartilhada por toda a aplicação.
 Mesmo criando múltiplas variáveis, elas sempre apontam para a mesma instância, mantendo os dados sincronizados.
+
+#### Sem Singleton
+
+```typescript
+class Biblioteca {
+  private livros: string[] = [];
+
+  public adicionarLivro(titulo: string): void {
+    this.livros.push(titulo);
+  }
+
+  public listarLivros(): void {
+    console.log("Livros na biblioteca:", this.livros);
+  }
+}
+
+// Criação de duas instâncias
+const biblioteca1 = new Biblioteca();
+const biblioteca2 = new Biblioteca();
+
+biblioteca1.adicionarLivro("React Aprenda Praticando");
+biblioteca2.adicionarLivro("Lógica de Programação e Algoritmos com JavaScript");
+
+biblioteca1.listarLivros();
+// ["React Aprenda Praticando"]
+
+biblioteca2.listarLivros();
+// ["Lógica de Programação e Algoritmos com JavaScript"]
+
+console.log(biblioteca1 === biblioteca2);
+// Irá retornar false, pois são instâncias diferentes
+```
+
+#### Com Singleton
+
 ```typescript
 class Biblioteca {
   private static instancia: Biblioteca;
@@ -102,6 +137,50 @@ Com isso, o código principal não precisa saber qual classe exata está sendo u
 No código abaixo, foi usado o padrão Factory Method para criar diferentes tipos de livros, como LivroFisico e LivroDigital, usando uma estrutura comum (interface).
 
 O método criarLivro() funciona como uma fábrica, ou seja, ele cuida da criação dos livros. Assim, as subclasses (como LojaFisica e LojaOnline) é que dizem qual tipo de livro será criado.
+##### Sem Factory:
+
+```typescript
+interface Livro {
+  ler(): void;
+}
+
+class LivroFisico implements Livro {
+  ler(): void {
+    console.log("Lendo livro físico: folheando páginas.");
+  }
+}
+
+class LivroDigital implements Livro {
+  ler(): void {
+    console.log("Lendo livro digital: deslizando na tela.");
+  }
+}
+
+class LojaFisica {
+  venderLivro(): void {
+    const livro = new LivroFisico(); // criação direta
+    livro.ler();
+  }
+}
+
+class LojaOnline {
+  venderLivro(): void {
+    const livro = new LivroDigital(); // criação direta
+    livro.ler();
+  }
+}
+
+const loja1 = new LojaFisica();
+const loja2 = new LojaOnline();
+
+loja1.venderLivro();
+// Lendo livro físico
+loja2.venderLivro();
+// Lendo livro digital
+```
+
+##### Com Factory:
+
 ```typescript
 interface Livro {
   ler(): void;
@@ -188,6 +267,34 @@ O Builder é especialmente útil quando:
 
 Neste exemplo, utilizamos o padrão Builder para montar objetos do tipo Livro, que podem conter título, autor, conteúdo e ISBN.
 O processo de construção é feito passo a passo, com chamadas encadeadas, facilitando a personalização sem precisar passar tudo no construtor.
+
+#### Sem Builder
+
+```typescript
+class Livro {
+  titulo?: string;
+  autor?: string;
+  conteudo?: string;
+  isbn?: string;
+
+  exibirInfo(): void {
+    console.log("Livro:", this.titulo, "-", this.autor, "-", this.isbn);
+  }
+}
+
+// Criação do Livro
+const livroCompleto = new Livro();
+livroCompleto.titulo = "Diário de um Banana";
+livroCompleto.autor = "Jeff Kinney";
+livroCompleto.isbn = "978-8576831309";
+livroCompleto.conteudo = "A vida nada fácil de um garoto na escola";
+
+livroCompleto.exibirInfo();
+// Livro: Diário de um Banana - Jeff Kinney - 978-8576831309
+```
+
+#### Com Builder
+
 ```typescript
 class Livro {
   titulo?: string;
@@ -233,14 +340,14 @@ class LivroBuilder {
 }
 
 const livroCompleto = new LivroBuilder()
-  .setTitulo("Design Patterns em Ação")
-  .setAutor("João Silva")
-  .setISBN("978-1234567890")
-  .setConteudo("Capítulo 1: Builder Pattern...")
+  .setTitulo("Diário de um Banana")
+  .setAutor("Jeff Kinney")
+  .setISBN("978-8576831309")
+  .setConteudo("Capítulo 1: A vida nada fácil de um garoto na escola...")
   .build();
 
 livroCompleto.exibirInfo();
-// Livro: Design Patterns em Ação - João Silva - 978-1234567890
+// Livro: Diário de um Banana - Jeff Kinney - 978-8576831309
 ```
 
 ### Pontos Fortes:
@@ -282,7 +389,11 @@ O Abstract Factory é recomendado quando:
 
 Neste exemplo, temos uma fábrica que cria produtos relacionados: Livro e Capa.
 Cada editora (Moderna e Clássica) implementa sua própria versão dos dois produtos, e a fábrica garante que o livro e a capa combinem entre si.
+
+#### Sem Abstract Factory:
+
 ```typescript
+// Interfaces dos produtos
 interface Livro {
   getDescricao(): string;
 }
@@ -291,7 +402,7 @@ interface Capa {
   getEstilo(): string;
 }
 
-// Produtos concretos - Editora Moderna
+// Produtos - Editora Moderna
 class LivroModerno implements Livro {
   getDescricao(): string {
     return "Livro de linguagem moderna e objetiva.";
@@ -304,7 +415,66 @@ class CapaModerna implements Capa {
   }
 }
 
-// Produtos concretos - Editora Clássica
+// Produtos - Editora Clássica
+class LivroClassico implements Livro {
+  getDescricao(): string {
+    return "Livro com estilo tradicional e linguagem rebuscada.";
+  }
+}
+
+class CapaClassica implements Capa {
+  getEstilo(): string {
+    return "Capa com moldura dourada e fontes clássicas.";
+  }
+}
+
+function montarLivroEditoraModerna() {
+  const livro = new LivroModerno();
+  const capa = new CapaModerna();
+
+  console.log(livro.getDescricao());
+  console.log(capa.getEstilo());
+}
+
+function montarLivroEditoraClassica() {
+  const livro = new LivroClassico();
+  const capa = new CapaClassica();
+
+  console.log(livro.getDescricao());
+  console.log(capa.getEstilo());
+}
+
+// Teste
+montarLivroEditoraModerna();
+montarLivroEditoraClassica();
+
+```
+
+#### Com Abstract Factory:
+
+```typescript
+interface Livro {
+  getDescricao(): string;
+}
+
+interface Capa {
+  getEstilo(): string;
+}
+
+// Produtos - Editora Moderna
+class LivroModerno implements Livro {
+  getDescricao(): string {
+    return "Livro de linguagem moderna e objetiva.";
+  }
+}
+
+class CapaModerna implements Capa {
+  getEstilo(): string {
+    return "Capa com design minimalista e cores vivas.";
+  }
+}
+
+// Produtos - Editora Clássica
 class LivroClassico implements Livro {
   getDescricao(): string {
     return "Livro com estilo tradicional e linguagem rebuscada.";
@@ -318,13 +488,13 @@ class CapaClassica implements Capa {
 }
 
 // Fábrica abstrata
-interface EditoraFactory {
+interface Editora {
   criarLivro(): Livro;
   criarCapa(): Capa;
 }
 
 // Fábricas concretas
-class EditoraModernaFactory implements EditoraFactory {
+class EditoraModerna implements Editora {
   criarLivro(): Livro {
     return new LivroModerno();
   }
@@ -333,7 +503,7 @@ class EditoraModernaFactory implements EditoraFactory {
   }
 }
 
-class EditoraClassicaFactory implements EditoraFactory {
+class EditoraClassica implements Editora {
   criarLivro(): Livro {
     return new LivroClassico();
   }
@@ -342,18 +512,17 @@ class EditoraClassicaFactory implements EditoraFactory {
   }
 }
 
-// Código cliente
-function montarLivro(factory: EditoraFactory) {
-  const livro = factory.criarLivro();
-  const capa = factory.criarCapa();
+function montarLivro(editora: Editora) {
+  const livro = editora.criarLivro();
+  const capa = editora.criarCapa();
 
   console.log(livro.getDescricao());
   console.log(capa.getEstilo());
 }
 
 // Teste
-const moderna = new EditoraModernaFactory();
-const classica = new EditoraClassicaFactory();
+const moderna = new EditoraModerna();
+const classica = new EditoraClassica();
 
 montarLivro(moderna);
 montarLivro(classica);
